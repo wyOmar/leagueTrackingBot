@@ -4,6 +4,7 @@
 
 Welcome to the League Tracker (FeedWatch) Bot! 
 
+https://discord.com/invite/ghyTQPPqEP
 
 ## Prerequisites
 * **Python 3.11+**
@@ -19,7 +20,7 @@ Welcome to the League Tracker (FeedWatch) Bot!
 Clone the repository to your local machine or server, then install the required Python packages.
 
 ```bash
-git clone [https://github.com/yourusername/leagueTrackingBot.git](https://github.com/yourusername/leagueTrackingBot.git)
+git clone [https://github.com/wyOmar/leagueTrackingBot.git](https://github.com/wyOmar/leagueTrackingBot.git)
 cd leagueTrackingBot
 pip install -r requirements.txt
 ```
