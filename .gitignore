@@ -1,0 +1,25 @@
+# --- Environment ---
+.env
+
+# --- Python ---
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+env/
+.venv/
+/legacy
+
+# --- League Assets ---
+assets/champion/
+champion.json
+
+# --- IDEs & OS ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
