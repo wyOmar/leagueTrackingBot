@@ -26,7 +26,7 @@ pip install -r requirements.txt
 ```
 
 ### 2. Configure Environment Variables
-Create a `.env` file in the root directory (you can copy `.env.example` if it exists) and fill in your credentials:
+Create a `.env` file in the root directory (you can copy `.env.example`) and fill in your credentials:
 
 ```env
 DISCORD_TOKEN=your_discord_bot_token
