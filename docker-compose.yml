@@ -1,0 +1,9 @@
+version: '3.8'
+
+services:
+  league-bot:
+    build: .
+    container_name: league_tracker_bot
+    restart: unless-stopped
+    env_file:
+      - .env
