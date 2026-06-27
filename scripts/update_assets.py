@@ -46,6 +46,7 @@ async def update_champions():
             if os.path.exists(file_path):
                 continue
 
+
             # Construct the direct image URL
             img_url = f"https://ddragon.leagueoflegends.com/cdn/{latest_version}/img/champion/{champ}.png"
             
