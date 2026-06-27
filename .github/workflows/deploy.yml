@@ -1,4 +1,4 @@
-name: Deploy Bot to AWS Lightsail
+name: Deploy Bot to vps
 
 on:
   push:
@@ -14,9 +14,9 @@ jobs:
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SERVER_IP }}
-          username: ubuntu
+          username: deploy-bot
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /home/ubuntu/leagueTrackingBot
+            cd /home/deploy-bot/leagueTrackingBot
             git pull origin main
             docker compose up -d --build
