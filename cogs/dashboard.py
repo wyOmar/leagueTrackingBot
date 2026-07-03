@@ -51,8 +51,17 @@ class Dashboard(commands.Cog):
                 return "none", puuid, {}
                 
             # --- NAME CHANGE DETECTION ---
-            new_game_name = participant.get("riotIdGameName")
-            new_tag_line = participant.get("riotIdTagline")
+            riot_id_str = participant.get("riotId")
+            new_game_name = None
+            new_tag_line = None
+            
+            # Spectator V5 returns a single string like "Name#Tag"
+            if riot_id_str and "#" in riot_id_str:
+                new_game_name, new_tag_line = riot_id_str.split("#", 1)
+            else:
+                # Fallback just in case Riot updates the Spectator API to match the Match API
+                new_game_name = participant.get("riotIdGameName")
+                new_tag_line = participant.get("riotIdTagline")
             
             if new_game_name and new_tag_line:
                 new_display = f"{new_game_name}#{new_tag_line}"
