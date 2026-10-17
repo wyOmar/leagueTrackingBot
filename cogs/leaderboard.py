@@ -30,6 +30,32 @@ class Leaderboard(commands.Cog):
                 if not puuid or not platform:
                     continue
 
+                # Check if the Riot ID has changed (isolated so failures don't block rank updates)
+                try:
+                    account_data = await riot_client.get_account_by_puuid(platform, puuid)
+                    if account_data:
+                        new_game_name = account_data.get("gameName")
+                        new_tag_line = account_data.get("tagLine")
+                        if new_game_name and new_tag_line:
+                            new_display = f"{new_game_name}#{new_tag_line}"
+                            old_display = acc.get("display") or (
+                                f"{acc.get('game_name')}#{acc.get('tag_line')}"
+                                if acc.get("game_name") and acc.get("tag_line")
+                                else None
+                            )
+                            if old_display and old_display != "Unknown#" and old_display != new_display:
+                                self.bot.dispatch(
+                                    "league_name_change",
+                                    discord_id_str,
+                                    puuid,
+                                    old_display,
+                                    new_game_name,
+                                    new_tag_line,
+                                    new_display
+                                )
+                except Exception as e:
+                    print(f"Error checking Riot ID for {puuid}: {e}")
+
                 try:
                     # get_rank returns a tuple of (rank, lp)
                     rank, lp = await riot_client.get_rank(platform, puuid)
@@ -147,9 +173,11 @@ class Leaderboard(commands.Cog):
         for user in all_users:
             discord_id = user["_id"]
             
-            # Get display name from Discord if possible, otherwise fallback
+            # Skip users who are not currently in this guild
             member = interaction.guild.get_member(int(discord_id))
-            display_name = member.display_name if member else user.get("display_name", "Unknown")
+            if not member:
+                continue
+            display_name = member.display_name
 
             account_visibility = member_visibility_map.get(discord_id, {})
 

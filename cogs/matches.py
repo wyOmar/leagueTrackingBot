@@ -96,6 +96,35 @@ class Matches(commands.Cog):
             if user:
                 tracked_puuids.append(puuid)
                 account_info = next(a for a in user["accounts"] if a["puuid"] == puuid)
+
+                new_game_name = p.get("riotIdGameName")
+                new_tag_line = p.get("riotIdTagline")
+                if not (new_game_name and new_tag_line):
+                    riot_id_str = p.get("riotId")
+                    if riot_id_str and "#" in riot_id_str:
+                        new_game_name, new_tag_line = riot_id_str.split("#", 1)
+
+                if new_game_name and new_tag_line:
+                    new_display = f"{new_game_name}#{new_tag_line}"
+                    old_display = account_info.get("display") or (
+                        f"{account_info.get('game_name')}#{account_info.get('tag_line')}"
+                        if account_info.get("game_name") and account_info.get("tag_line")
+                        else None
+                    )
+                    if old_display and old_display != "Unknown#" and old_display != new_display:
+                        self.bot.dispatch(
+                            "league_name_change",
+                            user["_id"],
+                            puuid,
+                            old_display,
+                            new_game_name,
+                            new_tag_line,
+                            new_display
+                        )
+                    account_info["game_name"] = new_game_name
+                    account_info["tag_line"] = new_tag_line
+                    account_info["display"] = new_display
+
                 tracked_participants.append({
                     "discord_id": user["_id"],
                     "puuid": puuid,
@@ -126,6 +155,9 @@ class Matches(commands.Cog):
                 if not member_setting or not member_setting.get("enabled", False):
                     continue
                 if not member_setting.get("account_visibility", {}).get(tp["puuid"], True):
+                    continue
+                # Settings persist after a member leaves, so skip anyone not currently in the guild
+                if not channel.guild.get_member(int(tp["discord_id"])):
                     continue
                 visible_participants.append(tp)
 

@@ -18,12 +18,23 @@ async def get_config(guild_id: int) -> dict:
 
 async def update_config(guild_id: int, update_data: dict):
     """Update general config settings."""
-    update_data["updated_at"] = datetime.now(timezone.utc)
+    now = datetime.now(timezone.utc)
+    update_data["updated_at"] = now
+    defaults = {
+        "dashboard_channel_id": None,
+        "dashboard_message_id": None,
+        "announcement_channel_id": None,
+        "history_channel_id": None,
+        "announced_queue_ids": [420],
+        "announce_name_changes": True,
+        "created_at": now
+    }
+    set_on_insert = {k: v for k, v in defaults.items() if k not in update_data}
     await guilds_collection.update_one(
         {"_id": str(guild_id)},
         {
             "$set": update_data,
-            "$setOnInsert": {"created_at": datetime.now(timezone.utc)}
+            "$setOnInsert": set_on_insert
         },
         upsert=True
     )
