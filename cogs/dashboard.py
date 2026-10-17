@@ -118,10 +118,15 @@ class Dashboard(commands.Cog):
             for acc in user.get("accounts", []):
                 puuid = acc.get("puuid")
                 if puuid:
+                    display = acc.get("display") or (
+                        f"{acc.get('game_name')}#{acc.get('tag_line')}"
+                        if acc.get("game_name") and acc.get("tag_line")
+                        else None
+                    )
                     all_accounts[puuid] = {
                         "discord_id": discord_id,
                         "platform": acc.get("platform"),
-                        "display": acc.get("display"),
+                        "display": display,
                         "last_rank": acc.get("last_rank", "Unranked"),
                         "last_lp": acc.get("last_lp", 0)
                     }
@@ -166,11 +171,15 @@ class Dashboard(commands.Cog):
             visible_streamers = []
             
             for puuid, game in self.active_games.items():
+                if not channel.guild.get_member(int(game["discord_id"])):
+                    continue
                 member_setting = await members_collection.find_one({"_id": f"{guild_id}_{game['discord_id']}"})
                 if member_setting and member_setting.get("enabled", False) and member_setting.get("account_visibility", {}).get(puuid, True):
                     visible_games.append(game)
 
             for puuid, streamer in self.streamer_mode_games.items():
+                if not channel.guild.get_member(int(streamer["discord_id"])):
+                    continue
                 member_setting = await members_collection.find_one({"_id": f"{guild_id}_{streamer['discord_id']}"})
                 if member_setting and member_setting.get("enabled", False) and member_setting.get("account_visibility", {}).get(puuid, True):
                     visible_streamers.append(streamer)

@@ -58,6 +58,16 @@ class RiotClient:
         text = await resp.text()
         raise Exception(f"Failed to get PUUID: {resp.status} - {text}")
 
+    async def get_account_by_puuid(self, platform: str, puuid: str) -> Optional[Dict[str, Any]]:
+        cluster = MATCH_REGION_MAP.get(platform.lower(), "americas")
+        if cluster == "sea":
+            cluster = "asia"
+        url = f"https://{cluster}.api.riotgames.com/riot/account/v1/accounts/by-puuid/{puuid}"
+        resp = await self._request(url)
+        if resp.status == 200:
+            return await resp.json()
+        return None
+
     async def check_active_game(self, platform: str, puuid: str, detect_streamer: bool = True) -> Optional[Dict[str, Any]]:
         url = f"https://{platform.lower()}.api.riotgames.com/lol/spectator/v5/active-games/by-summoner/{puuid}"
         resp = await self._request(url)

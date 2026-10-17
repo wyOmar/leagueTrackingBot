@@ -31,7 +31,7 @@ class NameTracker(commands.Cog):
             channel_id = guild_config["announcement_channel_id"]
             
             channel = self.bot.get_channel(channel_id)
-            if not channel:
+            if not channel or not channel.guild.get_member(int(discord_id)):
                 continue
                 
             # Check if this user is opted-in for this specific guild

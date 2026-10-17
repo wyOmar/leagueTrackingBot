@@ -36,9 +36,9 @@ async def remove_account(discord_id: int, puuid: str):
         {"$pull": {"accounts": {"puuid": puuid}}}
     )
 
-async def update_account_name(discord_id: int, puuid: str, game_name: str, tag_line: str, display: str):
+async def update_account_name(discord_id: int, puuid: str, game_name: str, tag_line: str, display: str) -> bool:
     """Updates the Riot ID (Name#Tag) for a specific linked account."""
-    await users_collection.update_one(
+    result = await users_collection.update_one(
         {"_id": str(discord_id), "accounts.puuid": puuid},
         {"$set": {
             "accounts.$.game_name": game_name,
@@ -46,3 +46,4 @@ async def update_account_name(discord_id: int, puuid: str, game_name: str, tag_l
             "accounts.$.display": display
         }}
     )
+    return result.modified_count > 0
