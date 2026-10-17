@@ -166,11 +166,15 @@ class Dashboard(commands.Cog):
             visible_streamers = []
             
             for puuid, game in self.active_games.items():
+                if not channel.guild.get_member(int(game["discord_id"])):
+                    continue
                 member_setting = await members_collection.find_one({"_id": f"{guild_id}_{game['discord_id']}"})
                 if member_setting and member_setting.get("enabled", False) and member_setting.get("account_visibility", {}).get(puuid, True):
                     visible_games.append(game)
 
             for puuid, streamer in self.streamer_mode_games.items():
+                if not channel.guild.get_member(int(streamer["discord_id"])):
+                    continue
                 member_setting = await members_collection.find_one({"_id": f"{guild_id}_{streamer['discord_id']}"})
                 if member_setting and member_setting.get("enabled", False) and member_setting.get("account_visibility", {}).get(puuid, True):
                     visible_streamers.append(streamer)

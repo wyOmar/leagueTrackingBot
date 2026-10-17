@@ -147,9 +147,11 @@ class Leaderboard(commands.Cog):
         for user in all_users:
             discord_id = user["_id"]
             
-            # Get display name from Discord if possible, otherwise fallback
+            # Skip users who are not currently in this guild
             member = interaction.guild.get_member(int(discord_id))
-            display_name = member.display_name if member else user.get("display_name", "Unknown")
+            if not member:
+                continue
+            display_name = member.display_name
 
             account_visibility = member_visibility_map.get(discord_id, {})
 

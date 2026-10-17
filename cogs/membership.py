@@ -101,6 +101,11 @@ class Membership(commands.Cog):
         if not accounts:
             return
 
+        # If they already opted in previously (e.g., rejoining the server), keep their settings active
+        member_config = await members.get_settings(member.guild.id, member.id)
+        if member_config.get("enabled", False):
+            return
+
         # Build account list for the DM
         lines = []
         for acc in accounts:
@@ -147,7 +152,7 @@ class Membership(commands.Cog):
         if not accounts:
             return
 
-        # 1. Announce departure in the guild's designated channel
+        # Announce departure in the guild's designated channel
         config = await guilds.get_config(member.guild.id)
         channel_id = config.get("announcement_channel_id")
 
@@ -181,9 +186,6 @@ class Membership(commands.Cog):
                     await channel.send(embed=embed)
                 except discord.Forbidden:
                     logger.warning(f"MembershipCog: Lacking permissions to send leave message in channel {channel_id}.")
-
-        # 2. Delete local guild_members config so they default to opted-out if they rejoin
-        await members.remove_member(member.guild.id, member.id)
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(Membership(bot))

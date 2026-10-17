@@ -127,6 +127,9 @@ class Matches(commands.Cog):
                     continue
                 if not member_setting.get("account_visibility", {}).get(tp["puuid"], True):
                     continue
+                # Settings persist after a member leaves, so skip anyone not currently in the guild
+                if not channel.guild.get_member(int(tp["discord_id"])):
+                    continue
                 visible_participants.append(tp)
 
             if visible_participants:
